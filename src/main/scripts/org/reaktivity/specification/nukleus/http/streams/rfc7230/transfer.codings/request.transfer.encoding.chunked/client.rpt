@@ -20,7 +20,7 @@ connect await ROUTED_CLIENT
         "nukleus://http/streams/source"
   option nukleus:route ${newClientAcceptRef}
   option nukleus:window 8192
-  option nukleus:transmission "duplex"
+  option nukleus:transmission "simplex"
 
 write nukleus:begin.ext [0x00] [0x07] ":scheme" [0x04] "http"
 write nukleus:begin.ext [0x00] [0x07] ":method" [0x04] "POST"
@@ -29,8 +29,6 @@ write nukleus:begin.ext [0x00] [0x0a] ":authority" [0x0e] "localhost:8080"
 write nukleus:begin.ext [0x00] [0x0c] "content-type" [0x0a] "text/plain"
 write nukleus:begin.ext [0x00] [0x11] "transfer-encoding" [0x07] "chunked"
 
-read nukleus:begin.ext [0x00] [0x06] "status" [0x03] "200"
-
 connected
 
 write "Chunk A"
@@ -38,4 +36,15 @@ write "Chunk B"
 write "Chunk C"
 write close
 
+
+accept await ROUTED_CLIENT
+       "nukleus://source/streams/http"
+    option nukleus:route 0L
+    option nukleus:window 8192
+    option nukleus:transmission "simplex"
+accepted  
+
+read nukleus:begin.ext [0x00] [0x07] ":status" [0x03] "200"
+
+connected
 read closed

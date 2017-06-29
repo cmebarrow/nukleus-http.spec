@@ -35,6 +35,5 @@ read "Chunk C"
 read closed
 
 write http:status "200" "OK"
-write http:content-length
 write close
 
